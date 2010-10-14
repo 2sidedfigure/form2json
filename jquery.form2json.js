@@ -1,0 +1,70 @@
+(function($) {
+    
+    var defaults = {
+            inputSelectors: 'input:not([type=radio], [type=checkbox], [type=reset]), input[type=checkbox]:checked, input[type=radio]:checked, textarea, select',
+            multiValSelector: '[type=checkbox], select',
+            dataOnly: false
+        },
+        settings = {};
+    
+    $.fn.form2json = function(options) {
+        form = $(this);
+        
+        if (!form.is('form')) {
+            return;
+        }
+        
+        settings = $.extend(true, {}, defaults, options);
+        
+        var data = {},
+            fields = form.find(settings.inputSelectors);
+
+        var singleVal = fields.filter(':not(' + settings.multiValSelector + ')'),
+            multiVal = fields.filter(settings.multiValSelector);
+            
+        singleVal.each(function() {
+            var item = $(this);
+            var key = item.attr('name') || item.attr('id');
+            
+            if (key) {
+                data[key] = item.val();
+            }
+        });
+        
+        multiVal.each(function() {
+            var item = $(this);
+            var key = item.attr('name') || item.attr('id');
+            
+            if (key) {
+                if (data[key]) {
+                    if (!isArray(data[key])) { //already exists, but needs to be turned into an array
+                        data[key] = [data[key]];
+                    }
+                    
+                    data[key].push(item.val());
+                } else { //data doesn't have the item yet, create it
+                    data[key] = item.val();
+                }
+            }
+        });
+        
+        if (settings.dataOnly) {
+            return data;
+        }
+        
+        var ajax = { data: data },
+            method = form.attr('method'),
+            action = form.attr('action');
+            
+        if (method && method.toUpperCase() != 'GET') {
+            ajax.type = method;
+        }
+        
+        if (action) {
+            ajax.url = action;
+        }
+        
+        return ajax;
+    };
+    
+})(jQuery);
