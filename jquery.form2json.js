@@ -3,12 +3,13 @@
     var defaults = {
             inputSelectors: 'input:not([type=radio], [type=checkbox], [type=reset]), input[type=checkbox]:checked, input[type=radio]:checked, textarea, select',
             multiValSelector: '[type=checkbox], select',
-            dataOnly: false
+            dataOnly: false,
+            keyAttr: 'name'
         },
         settings = {};
     
     $.fn.form2json = function(options) {
-        form = $(this);
+        var form = $(this);
         
         if (!form.is('form')) {
             return;
@@ -17,14 +18,13 @@
         settings = $.extend(true, {}, defaults, options);
         
         var data = {},
-            fields = form.find(settings.inputSelectors);
-
-        var singleVal = fields.filter(':not(' + settings.multiValSelector + ')'),
+            fields = form.find(settings.inputSelectors),
+            singleVal = fields.filter(':not(' + settings.multiValSelector + ')'),
             multiVal = fields.filter(settings.multiValSelector);
             
         singleVal.each(function() {
-            var item = $(this);
-            var key = item.attr('name') || item.attr('id');
+            var item = $(this),
+                key = item.attr(settings.keyAttr) || item.attr('name') || item.attr('id');
             
             if (key) {
                 data[key] = item.val();
@@ -32,8 +32,8 @@
         });
         
         multiVal.each(function() {
-            var item = $(this);
-            var key = item.attr('name') || item.attr('id');
+            var item = $(this),
+                key = item.attr(settings.keyAttr) || item.attr('name') || item.attr('id');
             
             if (key) {
                 if (data[key]) {
