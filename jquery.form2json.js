@@ -37,7 +37,7 @@
             
             if (key) {
                 if (data[key]) {
-                    if (!isArray(data[key])) { //already exists, but needs to be turned into an array
+                    if (!$.isArray(data[key])) { //already exists, but needs to be turned into an array
                         data[key] = [data[key]];
                     }
                     
