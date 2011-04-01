@@ -4,7 +4,7 @@
             inputSelectors: 'input:not([type=radio], [type=checkbox], [type=reset]), input[type=checkbox]:checked, input[type=radio]:checked, textarea, select',
             multiValSelector: '[type=checkbox], select',
             keyAttr: 'name',
-	    wrapped: false
+            wrapped: false
         },
         settings = {};
     
@@ -26,9 +26,7 @@
             var item = $(this),
                 key = item.attr(settings.keyAttr) || item.attr('name') || item.attr('id');
             
-            if (key) {
-                data[key] = item.val();
-            }
+            key && (data[key] = item.val());
         });
         
         multiVal.each(function() {
@@ -37,12 +35,12 @@
             
             if (key) {
                 if (data[key]) {
-                    if (!$.isArray(data[key])) { //already exists, but needs to be turned into an array
-                        data[key] = [data[key]];
-                    }
+                    //already exists, but needs to be turned into an array
+                    $.isArray(data[key]) || (data[key] = [ data[key] ]);
                     
                     data[key].push(item.val());
-                } else { //data doesn't have the item yet, create it
+                } else {
+                    //data doesn't have the item yet, create it
                     data[key] = item.val();
                 }
             }
@@ -56,13 +54,8 @@
             method = form.attr('method'),
             action = form.attr('action');
             
-        if (method && method.toUpperCase() != 'GET') {
-            ajax.type = method;
-        }
-        
-        if (action) {
-            ajax.url = action;
-        }
+        (method && method.toUpperCase() != 'GET') && (ajax.type = method);
+        (action) && (ajax.url = action);
         
         return ajax;
     };
