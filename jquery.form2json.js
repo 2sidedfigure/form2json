@@ -3,8 +3,8 @@
     var defaults = {
             inputSelectors: 'input:not([type=radio], [type=checkbox], [type=reset]), input[type=checkbox]:checked, input[type=radio]:checked, textarea, select',
             multiValSelector: '[type=checkbox], select',
-            dataOnly: false,
-            keyAttr: 'name'
+            keyAttr: 'name',
+	    wrapped: false
         },
         settings = {};
     
@@ -48,7 +48,7 @@
             }
         });
         
-        if (settings.dataOnly) {
+        if (!settings.wrapped) {
             return data;
         }
         
