@@ -21,6 +21,12 @@
 						case "wrapped":
 							opts = { wrapped: true };
 							break;
+						case "text-only":
+							opts = { inputSelectors: 'input:text, textarea' };
+							break;
+                        case "key":
+                            opts = { keyAttr: 'id' };
+                            break;
 					}
 
 					console.log(title);
@@ -112,6 +118,18 @@
 					<a href="#" id="wrapped">Wrapped</a>
 					<code>
 						$('form').form2json({ wrapped: true });
+					</code>
+				</li>
+				<li>
+					<a href="#" id="text-only">Text fields only</a>
+					<code>
+						$('form').form2json({ inputSelectors: 'input:text, textarea' });
+					</code>
+				</li>
+				<li>
+					<a href="#" id="key">Use id attribute as data key</a>
+					<code>
+						$('form').form2json({ keyAttr: 'id' });
 					</code>
 				</li>
 			</ul>
