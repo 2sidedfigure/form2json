@@ -7,13 +7,56 @@
 		<script type="text/javascript" src="../jquery.form2json.js"></script>
 		<script type="text/javascript">
 
+            function formatJSON(obj, indent) {
+                obj || (obj = {});
+                indent || (indent = 1);
+
+                var output = '',
+                    isArray = (typeof obj === 'object' && obj.unshift);
+
+                output = isArray ? '[' : '{';
+
+                for (var p in obj) {
+                    output += '\n';
+
+                    for (var t = 0; t < indent; t++) output += '\t';
+
+                    isArray || (output += '"' + p + '" : ');
+
+                   if (typeof obj[p] === 'object') {
+                        output += formatJSON(obj[p], indent + 1);
+                    } else if (typeof obj[p] === 'string') {
+                        output += '"' + obj[p] + '"';
+                    } else {
+                        output += obj[p];
+                    }
+                    
+                    output += ',';
+                }
+
+                output += '\n';
+
+                for (var t = 0; t < indent - 1; t++) {
+                    output += '\t';
+                }
+
+                output += isArray ? ']' : '}';
+
+                return output;
+            }
+
+            function closeModal(e) {
+                $(e.target).closest('#output').fadeOut(400);
+            }
+
 			$(document).ready(function() {
 
 				$('#plugin-test a').bind('click', function(e) {
 					var self = $(e.target),
 						id = self.attr('id'),
 						title = self.text(),
-						opts;
+						opts,
+                        output = {};
 
 					switch (id) {
 						case "default":
@@ -29,11 +72,19 @@
                             break;
 					}
 
+                    output = $('form').form2json(opts);
+
 					console.log(title);
-					console.dir($('form').form2json(opts));
+					console.dir(output);
+
+                    $('#output').fadeIn(400).find('code').html(formatJSON(output));
 
 					e.preventDefault();
 				});
+
+                $('#output').bind('click', closeModal).find('code').bind('click', function(e) {
+                    e.stopPropagation();
+                }).siblings('a').bind('click', closeModal);
 
 			});
 
@@ -134,5 +185,10 @@
 				</li>
 			</ul>
 		</div>
+
+        <div id="output">
+            <a href="#" class="close">&times; <span>Close</span></a>
+            <code></code>
+        </div>
 	</body>
 </html>
