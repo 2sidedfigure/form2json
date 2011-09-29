@@ -70,6 +70,12 @@
                         case "key":
                             opts = { keyAttr: 'id' };
                             break;
+                        case "no-empty-single":
+                            opts = { allowEmptySingleVal: false };
+                            break;
+                        case "empty-multiple":
+                            opts = { allowEmptyMultiVal: true };
+                            break;
 					}
 
                     output = $('form').form2json(opts);
@@ -149,6 +155,11 @@
 					<textarea name="plea" id="form_plea" rows="5" cols="50">How often do you get a chance at an evening with the famous boy adventurer 'Rusty' Venture?!</textarea>
 				</p>
 
+                <fieldset>
+                    <input type="checkbox" name="deadly" id="form_deadly_force" value="1" checked="checked" />
+                    <label for="form_deadly_force">Allow the use of deadly force.</label>
+                </fieldset>
+
 				<p class="actions">
 					<input type="submit" value="Post!" />
 				</p>
@@ -181,6 +192,18 @@
 					<a href="#" id="key">Use id attribute as data key</a>
 					<code>
 						$('form').form2json({ keyAttr: 'id' });
+					</code>
+				</li>
+				<li>
+					<a href="#" id="no-empty-single">Disallow empty single value fields</a>
+					<code>
+						$('form').form2json({ allowEmptySingleVal: false });
+					</code>
+				</li>
+				<li>
+					<a href="#" id="empty-multiple">Allow empty multiple value fields</a>
+					<code>
+						$('form').form2json({ allowEmptyMultiVal: true });
 					</code>
 				</li>
 			</ul>
