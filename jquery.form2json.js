@@ -36,30 +36,60 @@
         singleVal.each(function() {
             var item = $(this),
                 key = item.attr(settings.keyAttr) || item.attr('name') || item.attr('id'),
-                dKey = $.isFunction(settings.keyTransform) ? settings.keyTransform(key, item) : key,
-                val = item.val();
+                keyHierarchy = key.split('.'),
+                dKeys = $.map(keyHierarchy, function(k) {
+                    return $.isFunction(settings.keyTransform) ? settings.keyTransform(k, item) : k;
+                }),
+                val = item.val(),
+                obj = data,
+                prop;
 
             if (!settings.allowEmptySingleVal && empty(val)) return true;
-            (key) && (data[dKey] = val);
+            if (key) {
+                while (prop = dKeys.shift()) {
+                    obj[prop] = obj[prop] || {};
+                    if (dKeys.length) {
+                        obj = obj[prop];
+                    } else {
+                        break;
+                    }
+                }
+
+                obj[prop] = val;
+            }
         });
 
         multiVal.each(function() {
             var item = $(this),
                 key = item.attr(settings.keyAttr) || item.attr('name') || item.attr('id'),
-                dKey = $.isFunction(settings.keyTransform) ? settings.keyTransform(key, item) : key,
-                val = item.is(':checkbox:not(:checked)') ? null : item.val();
+                keyHierarchy = key.split('.'),
+                dKeys = $.map(keyHierarchy, function(k) {
+                    return $.isFunction(settings.keyTransform) ? settings.keyTransform(k, item) : k;
+                }),
+                val = item.is(':checkbox:not(:checked)') ? null : item.val(),
+                obj = data,
+                prop;
 
             if (key && (val || settings.allowEmptyMultiVal)) {
-                if (data[dKey]) {
+                while (prop = dKeys.shift()) {
+                    obj[prop] = obj[prop] || (dKeys.length ? {} : null);
+                    if (dKeys.length) {
+                        obj = obj[prop];
+                    } else {
+                        break;
+                    }
+                }
+
+                if (obj[prop]) {
                     if (val) {
                         //already exists, but needs to be turned into an array
-                        $.isArray(data[dKey]) || (data[dKey] = [ data[dKey] ]);
+                        $.isArray(obj[prop]) || (obj[prop] = [ obj[prop] ]);
 
-                        data[dKey].push(val);
+                        obj[prop].push(val);
                     }
                 } else {
                     //data doesn't have the item yet, create it
-                    data[dKey] = val;
+                    obj[prop] = val;
                 }
             }
         });
