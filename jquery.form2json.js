@@ -36,16 +36,17 @@
         singleVal.each(function() {
             var item = $(this),
                 key = item.attr(settings.keyAttr) || item.attr('name') || item.attr('id'),
-                keyHierarchy = key.split('.'),
-                dKeys = $.map(keyHierarchy, function(k) {
-                    return $.isFunction(settings.keyTransform) ? settings.keyTransform(k, item) : k;
-                }),
-                val = item.val(),
-                obj = data,
-                prop;
+                val = item.val();
 
             if (!settings.allowEmptySingleVal && empty(val)) return true;
             if (key) {
+                var keyHierarchy = key.split('.'),
+                    dKeys = $.map(keyHierarchy, function(k) {
+                        return $.isFunction(settings.keyTransform) ? settings.keyTransform(k, item) : k;
+                    }),
+                    obj = data,
+                    prop;
+
                 while (prop = dKeys.shift()) {
                     obj[prop] = obj[prop] || {};
                     if (dKeys.length) {
@@ -62,15 +63,16 @@
         multiVal.each(function() {
             var item = $(this),
                 key = item.attr(settings.keyAttr) || item.attr('name') || item.attr('id'),
-                keyHierarchy = key.split('.'),
-                dKeys = $.map(keyHierarchy, function(k) {
-                    return $.isFunction(settings.keyTransform) ? settings.keyTransform(k, item) : k;
-                }),
-                val = item.is(':checkbox:not(:checked)') ? null : item.val(),
-                obj = data,
-                prop;
+                val = item.is(':checkbox:not(:checked)') ? null : item.val();
 
             if (key && (val || settings.allowEmptyMultiVal)) {
+                var keyHierarchy = key.split('.'),
+                    dKeys = $.map(keyHierarchy, function(k) {
+                        return $.isFunction(settings.keyTransform) ? settings.keyTransform(k, item) : k;
+                    }),
+                    obj = data,
+                    prop;
+
                 while (prop = dKeys.shift()) {
                     obj[prop] = obj[prop] || (dKeys.length ? {} : null);
                     if (dKeys.length) {
